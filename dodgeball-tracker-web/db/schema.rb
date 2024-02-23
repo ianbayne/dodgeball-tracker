@@ -10,9 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_22_024637) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_23_123246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "catches", force: :cascade do |t|
+    t.bigint "catcher_id", null: false
+    t.bigint "catchee_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["catchee_id"], name: "index_catches_on_catchee_id"
+    t.index ["catcher_id"], name: "index_catches_on_catcher_id"
+  end
+
+  create_table "hits", force: :cascade do |t|
+    t.bigint "hitter_id", null: false
+    t.bigint "hittee_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["hittee_id"], name: "index_hits_on_hittee_id"
+    t.index ["hitter_id"], name: "index_hits_on_hitter_id"
+  end
 
   create_table "players", force: :cascade do |t|
     t.string "first_name"
@@ -21,4 +39,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_024637) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "catches", "players", column: "catchee_id"
+  add_foreign_key "catches", "players", column: "catcher_id"
+  add_foreign_key "hits", "players", column: "hittee_id"
+  add_foreign_key "hits", "players", column: "hitter_id"
 end
