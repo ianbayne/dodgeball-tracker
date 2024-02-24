@@ -26,7 +26,9 @@ RSpec.describe Player, type: :model do
 
       expect(player).to be_valid
     end
+  end
 
+  describe 'associations' do
     it 'can have many hits' do
       hitter = create(:player)
       hittee = create(:player)
