@@ -21,12 +21,17 @@ module Types
 
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
+    field :players, [Types::PlayerType], null: false
+    field :player, Types::PlayerType, null: false do
+      argument :id, ID, required: true
+    end
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-                               description: 'An example field added by the generator'
-    def test_field
-      'Hello World!'
+    def players
+      Player.all
+    end
+
+    def player(id:)
+      Player.find(id)
     end
   end
 end
