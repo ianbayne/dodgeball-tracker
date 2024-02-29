@@ -2,6 +2,8 @@ import { Text, View } from "react-native";
 
 import { gql, useQuery } from "@apollo/client";
 
+import type Player from "./types/Player";
+
 const GET_PLAYERS = gql`
   query GetPlayers {
     players {
@@ -21,22 +23,12 @@ function Players() {
 
   return (
     <View>
-      {data.players.map(
-        ({
-          id,
-          firstName,
-          lastName,
-        }: {
-          id: number;
-          firstName: string;
-          lastName: string;
-        }) => (
-          <View key={id}>
-            <Text>{firstName}</Text>
-            <Text>{lastName}</Text>
-          </View>
-        )
-      )}
+      {data.players.map(({ id, firstName, lastName }: Player) => (
+        <View key={id}>
+          <Text>{firstName}</Text>
+          <Text>{lastName}</Text>
+        </View>
+      ))}
     </View>
   );
 }
