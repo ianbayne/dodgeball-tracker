@@ -6,6 +6,7 @@ class Player < ApplicationRecord
     validates :last_name
   end
 
+  # TODO: What happens when this player is destroyed?
   has_many :hits, foreign_key: 'hitter_id'
   has_many :times_hit, class_name: 'Hit', foreign_key: 'hittee_id'
 
