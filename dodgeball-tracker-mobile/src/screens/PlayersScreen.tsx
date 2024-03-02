@@ -1,8 +1,8 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { gql, useQuery } from "@apollo/client";
 
-import type Player from "./types/Player";
+import type Player from "../types/Player";
 
 const GET_PLAYERS = gql`
   query GetPlayers {
@@ -14,7 +14,7 @@ const GET_PLAYERS = gql`
   }
 `;
 
-function Players() {
+function PlayersScreen() {
   const { loading, error, data } = useQuery(GET_PLAYERS);
 
   if (loading) return <Text>Loading...</Text>;
@@ -22,7 +22,7 @@ function Players() {
   if (error) return <Text>Error : {error.message}</Text>;
 
   return (
-    <View>
+    <View style={styles.container}>
       {data.players.map(({ id, firstName, lastName }: Player) => (
         <View key={id}>
           <Text>{firstName}</Text>
@@ -33,4 +33,12 @@ function Players() {
   );
 }
 
-export default Players;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
+export default PlayersScreen;

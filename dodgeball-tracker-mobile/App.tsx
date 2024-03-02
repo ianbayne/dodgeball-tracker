@@ -1,28 +1,24 @@
-import { StyleSheet, Text, View } from "react-native";
-
 import { StatusBar } from "expo-status-bar";
 import { ApolloProvider } from "@apollo/client";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import client from "./src/apolloClient";
-import Players from "./src/Players";
+import HomeScreen from "./src/screens/HomeScreen";
+import PlayersScreen from "./src/screens/PlayersScreen";
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <View style={styles.container}>
-        <Text>Is it working?</Text>
-        <Players />
-        <StatusBar style="auto" />
-      </View>
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Players" component={PlayersScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+      <StatusBar style="auto" />
     </ApolloProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
