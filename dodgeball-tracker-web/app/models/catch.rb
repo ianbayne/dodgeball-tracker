@@ -4,11 +4,6 @@ class Catch < ApplicationRecord
   belongs_to :catcher, class_name: 'Player'
   belongs_to :catchee, class_name: 'Player'
 
-  validate :catcher_and_catchee_must_be_different
-
-  private
-
-  def catcher_and_catchee_must_be_different
-    errors.add(:base, 'Catcher and catchee must be different players') if catcher == catchee
-  end
+  validates :catcher, comparison: { other_than: :catchee, message: 'must be a different player than the catchee' }
+  validates :catchee, comparison: { other_than: :catcher, message: 'must be a different player than the catcher' }
 end

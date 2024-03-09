@@ -8,7 +8,8 @@ RSpec.describe Catch, type: :model do
 
       catch.valid?
 
-      expect(catch.errors.messages[:base]).to eq ['Catcher and catchee must be different players']
+      expect(catch.errors.messages[:catcher]).to eq ['must be a different player than the catchee']
+      expect(catch.errors.messages[:catchee]).to eq ['must be a different player than the catcher']
     end
   end
 end

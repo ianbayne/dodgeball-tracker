@@ -8,7 +8,8 @@ RSpec.describe Hit, type: :model do
 
       hit.valid?
 
-      expect(hit.errors.messages[:base]).to eq ['Hitter and hittee must be different players']
+      expect(hit.errors.messages[:hitter]).to eq ['must be a different player than the hittee']
+      expect(hit.errors.messages[:hittee]).to eq ['must be a different player than the hitter']
     end
   end
 end
