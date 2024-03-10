@@ -21,13 +21,19 @@ module Types
 
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
-    field :players, [Types::PlayerType], null: false
+    field :players, [Types::PlayerType], null: false do
+      argument :search, String, required: false
+    end
     field :player, Types::PlayerType, null: false do
       argument :id, ID, required: true
     end
 
-    def players
-      Player.all
+    def players(search: nil)
+      if search
+        Player.where('first_name ILIKE ? OR last_name ILIKE ?', "%#{search}%", "%#{search}%")
+      else
+        Player.all
+      end
     end
 
     def player(id:)
