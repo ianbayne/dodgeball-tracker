@@ -48,7 +48,7 @@ const CREATE_HIT = gql`
 `;
 
 function HomeScreen() {
-  const [searchTerm, setSearchTerm] = useState<string>("Enter a player's name");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [searchPlayers, { data }] = useLazyQuery(SEARCH_PLAYERS);
   const [createCatch /*, { data, loading, error } */] =
@@ -69,17 +69,19 @@ function HomeScreen() {
       />
       <TextInput
         value={searchTerm}
+        placeholder="Enter player's name"
         onChangeText={(text) => {
           setSearchTerm(text);
           searchPlayers({ variables: { searchTerm: text } });
         }}
       />
       <View>
-        {data?.players?.map((player: Player) => (
-          <Text key={player.id}>
-            {player.firstName} {player.lastName}
-          </Text>
-        ))}
+        {searchTerm &&
+          data?.players?.map((player: Player) => (
+            <Text key={player.id}>
+              {player.firstName} {player.lastName}
+            </Text>
+          ))}
       </View>
     </View>
   );
