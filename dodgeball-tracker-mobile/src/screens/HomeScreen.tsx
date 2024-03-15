@@ -48,6 +48,7 @@ const CREATE_HIT = gql`
 `;
 
 function HomeScreen() {
+  // TODO: Switch to useReducer
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showHitOrCatchButtons, setShowHitOrCatchButtons] =
     useState<boolean>(true);
