@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Text, TextInput, View } from "react-native";
+import { Fragment, useEffect, useReducer, useState } from "react";
+import { Button, TextInput, View } from "react-native";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
@@ -49,40 +49,107 @@ const CREATE_HIT = gql`
 
 function HomeScreen() {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showHitOrCatchButtons, setShowHitOrCatchButtons] =
+    useState<boolean>(true);
+  const [showActiveOrPassiveButtons, setShowActiveOrPassiveButtons] =
+    useState<boolean>(false);
+  const [showSearch, setShowSearch] = useState<boolean>(false);
+  const [activeId, setActiveId] = useState<number | null>(null);
+  const [passiveId, setPassiveId] = useState<number | null>(null);
+  const [isCatch, setIsCatch] = useState<boolean | null>(null);
 
   const [searchPlayers, { data }] = useLazyQuery(SEARCH_PLAYERS);
   const [createCatch /*, { data, loading, error } */] =
     useMutation(CREATE_CATCH);
   const [createHit /*, { data, loading, error } */] = useMutation(CREATE_HIT);
 
+  useEffect(() => {
+    searchPlayers({ variables: { searchTerm } });
+  }, [searchTerm]);
+
   return (
     <View>
-      <Button
-        onPress={() =>
-          createCatch({ variables: { catcherId: 1, catcheeId: 2 } })
-        }
-        title="Create catch"
-      />
-      <Button
-        onPress={() => createHit({ variables: { hitterId: 1, hitteeId: 2 } })}
-        title="Create hit"
-      />
-      <TextInput
-        value={searchTerm}
-        placeholder="Enter player's name"
-        onChangeText={(text) => {
-          setSearchTerm(text);
-          searchPlayers({ variables: { searchTerm: text } });
-        }}
-      />
-      <View>
-        {searchTerm &&
-          data?.players?.map((player: Player) => (
-            <Text key={player.id}>
-              {player.firstName} {player.lastName}
-            </Text>
-          ))}
-      </View>
+      {showHitOrCatchButtons && (
+        <Fragment>
+          <Button
+            onPress={() => {
+              setShowHitOrCatchButtons(false);
+              setShowActiveOrPassiveButtons(true);
+              setIsCatch(true);
+            }}
+            title="Create catch"
+          />
+          <Button
+            onPress={() => {
+              setShowHitOrCatchButtons(false);
+              setShowActiveOrPassiveButtons(true);
+              setIsCatch(false);
+            }}
+            title="Create hit"
+          />
+        </Fragment>
+      )}
+      {showActiveOrPassiveButtons && (
+        <Fragment>
+          <Button
+            onPress={() => {
+              setShowActiveOrPassiveButtons(false);
+              setShowSearch(true);
+              setActiveId(1);
+            }}
+            title="I caught or hit the other person"
+          />
+          <Button
+            onPress={() => {
+              setShowActiveOrPassiveButtons(false);
+              setShowSearch(true);
+              setPassiveId(1);
+            }}
+            title="I was caught or hit by the other person"
+          />
+        </Fragment>
+      )}
+      {showSearch && (
+        <Fragment>
+          <TextInput
+            value={searchTerm}
+            placeholder="Enter player's name"
+            onChangeText={(text) => setSearchTerm(text)}
+          />
+          <View>
+            {searchTerm &&
+              data?.players?.map((player: Player) => (
+                <Button
+                  key={player.id}
+                  title={`${player.firstName} ${player.lastName}`}
+                  onPress={() => {
+                    const activePlayerId = activeId ? activeId : player.id;
+                    const passivePlayerId = passiveId ? passiveId : player.id;
+                    isCatch
+                      ? createCatch({
+                          variables: {
+                            catcherId: activePlayerId,
+                            catcheeId: passivePlayerId,
+                          },
+                        })
+                      : createHit({
+                          variables: {
+                            hitterId: activePlayerId,
+                            hitteeId: passivePlayerId,
+                          },
+                        });
+                    setIsCatch(null);
+                    setActiveId(null);
+                    setPassiveId(null);
+                    setSearchTerm("");
+                    setShowSearch(false);
+                    setShowHitOrCatchButtons(true);
+                  }}
+                />
+              ))}
+          </View>
+        </Fragment>
+      )}
     </View>
   );
 }
