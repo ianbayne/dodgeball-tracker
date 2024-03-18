@@ -1,5 +1,12 @@
 import { Fragment, useEffect, useReducer, useState } from "react";
-import { Button, TextInput, View } from "react-native";
+import {
+  Button,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
@@ -69,90 +76,129 @@ function HomeScreen() {
   }, [searchTerm]);
 
   return (
-    <View>
-      {showHitOrCatchButtons && (
-        <Fragment>
-          <Button
-            onPress={() => {
-              setShowHitOrCatchButtons(false);
-              setShowActiveOrPassiveButtons(true);
-              setIsCatch(true);
-            }}
-            title="Create catch"
-          />
-          <Button
-            onPress={() => {
-              setShowHitOrCatchButtons(false);
-              setShowActiveOrPassiveButtons(true);
-              setIsCatch(false);
-            }}
-            title="Create hit"
-          />
-        </Fragment>
-      )}
-      {showActiveOrPassiveButtons && (
-        <Fragment>
-          <Button
-            onPress={() => {
-              setShowActiveOrPassiveButtons(false);
-              setShowSearch(true);
-              setActiveId(1);
-            }}
-            title="I caught or hit the other person"
-          />
-          <Button
-            onPress={() => {
-              setShowActiveOrPassiveButtons(false);
-              setShowSearch(true);
-              setPassiveId(1);
-            }}
-            title="I was caught or hit by the other person"
-          />
-        </Fragment>
-      )}
-      {showSearch && (
-        <Fragment>
-          <TextInput
-            value={searchTerm}
-            placeholder="Enter player's name"
-            onChangeText={(text) => setSearchTerm(text)}
-          />
-          <View>
-            {searchTerm &&
-              data?.players?.map((player: Player) => (
-                <Button
-                  key={player.id}
-                  title={`${player.firstName} ${player.lastName}`}
-                  onPress={() => {
-                    const activePlayerId = activeId ? activeId : player.id;
-                    const passivePlayerId = passiveId ? passiveId : player.id;
-                    isCatch
-                      ? createCatch({
-                          variables: {
-                            catcherId: activePlayerId,
-                            catcheeId: passivePlayerId,
-                          },
-                        })
-                      : createHit({
-                          variables: {
-                            hitterId: activePlayerId,
-                            hitteeId: passivePlayerId,
-                          },
-                        });
-                    setIsCatch(null);
-                    setActiveId(null);
-                    setPassiveId(null);
-                    setSearchTerm("");
-                    setShowSearch(false);
-                    setShowHitOrCatchButtons(true);
-                  }}
-                />
-              ))}
-          </View>
-        </Fragment>
-      )}
+    <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        {showHitOrCatchButtons && (
+          <Fragment>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                setShowHitOrCatchButtons(false);
+                setShowActiveOrPassiveButtons(true);
+                setIsCatch(true);
+              }}
+            >
+              <Text style={styles.text}>Create catch</Text>
+            </Pressable>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                setShowHitOrCatchButtons(false);
+                setShowActiveOrPassiveButtons(true);
+                setIsCatch(false);
+              }}
+            >
+              <Text style={styles.text}>Create hit</Text>
+            </Pressable>
+          </Fragment>
+        )}
+        {showActiveOrPassiveButtons && (
+          <Fragment>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                setShowActiveOrPassiveButtons(false);
+                setShowSearch(true);
+                setActiveId(1);
+              }}
+            >
+              <Text style={styles.text}>I caught or hit the other person</Text>
+            </Pressable>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                setShowActiveOrPassiveButtons(false);
+                setShowSearch(true);
+                setPassiveId(1);
+              }}
+            >
+              <Text style={styles.text}>
+                I was caught or hit by the other person
+              </Text>
+            </Pressable>
+          </Fragment>
+        )}
+        {showSearch && (
+          <Fragment>
+            <TextInput
+              value={searchTerm}
+              placeholder="Enter player's name"
+              onChangeText={(text) => setSearchTerm(text)}
+            />
+            <View>
+              {searchTerm &&
+                data?.players?.map((player: Player) => (
+                  <Pressable
+                    key={player.id}
+                    onPress={() => {
+                      const activePlayerId = activeId ? activeId : player.id;
+                      const passivePlayerId = passiveId ? passiveId : player.id;
+                      isCatch
+                        ? createCatch({
+                            variables: {
+                              catcherId: activePlayerId,
+                              catcheeId: passivePlayerId,
+                            },
+                          })
+                        : createHit({
+                            variables: {
+                              hitterId: activePlayerId,
+                              hitteeId: passivePlayerId,
+                            },
+                          });
+                      setIsCatch(null);
+                      setActiveId(null);
+                      setPassiveId(null);
+                      setSearchTerm("");
+                      setShowSearch(false);
+                      setShowHitOrCatchButtons(true);
+                    }}
+                  >
+                    <Text>{`${player.firstName} ${player.lastName}`}</Text>
+                  </Pressable>
+                ))}
+            </View>
+          </Fragment>
+        )}
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    backgroundColor: "lightgreen",
+    borderRadius: 20,
+    padding: 40,
+    width: 300,
+  },
+  buttonContainer: {
+    height: 400,
+    justifyContent: "space-around",
+  },
+  container: {
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "center",
+  },
+  text: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    textTransform: "uppercase",
+  },
+});
 
 export default HomeScreen;
