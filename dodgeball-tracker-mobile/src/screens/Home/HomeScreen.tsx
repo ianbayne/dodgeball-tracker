@@ -3,7 +3,7 @@ import { Button, TextInput, View } from "react-native";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
-import type Player from "../types/Player";
+import type Player from "../../types/Player";
 
 const SEARCH_PLAYERS = gql`
   query SearchPlayers($searchTerm: String) {
