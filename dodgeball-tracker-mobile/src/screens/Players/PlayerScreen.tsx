@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Button, ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 
 import { gql, useQuery } from "@apollo/client";
 
@@ -13,7 +12,15 @@ const GET_PLAYER = gql`
   }
 `;
 
-function PlayerScreen({ navigation, route }) {
+type Props = {
+  route: {
+    params: {
+      id: number;
+    };
+  };
+};
+
+function PlayerScreen({ route }: Props) {
   // useEffect(() => {
   //   navigation.setOptions({
   //     headerLeft: () => (
