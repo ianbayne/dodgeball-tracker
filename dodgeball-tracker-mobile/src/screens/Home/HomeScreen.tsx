@@ -1,12 +1,5 @@
-import { Fragment, useEffect, useReducer, useState } from "react";
-import {
-  Button,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Fragment, useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
