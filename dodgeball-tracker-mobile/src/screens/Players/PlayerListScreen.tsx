@@ -2,8 +2,10 @@ import { ScrollView, StyleSheet, Text } from "react-native";
 
 import { gql, useQuery } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import type Player from "../../types/Player";
+import type { PlayersStackParamList } from "./PlayersStackNavigator";
 
 const GET_PLAYERS = gql`
   query GetPlayers {
@@ -15,8 +17,13 @@ const GET_PLAYERS = gql`
   }
 `;
 
+type PlayerListScreenProp = NativeStackNavigationProp<
+  PlayersStackParamList,
+  "PlayerListScreen"
+>;
+
 function PlayerListScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<PlayerListScreenProp>();
 
   const { loading, error, data } = useQuery(GET_PLAYERS);
 

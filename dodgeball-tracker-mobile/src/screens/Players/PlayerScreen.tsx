@@ -1,6 +1,9 @@
 import { ScrollView, StyleSheet, Text } from "react-native";
 
 import { gql, useQuery } from "@apollo/client";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import type { PlayersStackParamList } from "./PlayersStackNavigator";
 
 const GET_PLAYER = gql`
   query GetPlayer($id: ID!) {
@@ -12,13 +15,7 @@ const GET_PLAYER = gql`
   }
 `;
 
-type Props = {
-  route: {
-    params: {
-      id: number;
-    };
-  };
-};
+type Props = NativeStackScreenProps<PlayersStackParamList, "PlayerScreen">;
 
 function PlayerScreen({ route }: Props) {
   // useEffect(() => {

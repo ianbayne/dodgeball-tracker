@@ -3,9 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PlayerListScreen from "./PlayerListScreen";
 import PlayerScreen from "./PlayerScreen";
 
-type PlayersStackParamList = {
+export type PlayersStackParamList = {
   PlayerListScreen: undefined;
-  PlayerScreen: undefined;
+  PlayerScreen: { id: string };
 };
 
 const PlayersStack = createNativeStackNavigator<PlayersStackParamList>();
