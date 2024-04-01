@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useReducer } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
@@ -47,17 +47,89 @@ const CREATE_HIT = gql`
   }
 `;
 
+type State = {
+  showHitOrCatchButtons: boolean;
+  showActiveOrPassiveButtons: boolean;
+  showSearch: boolean;
+  activeId: number | null;
+  passiveId: number | null;
+  isCatch: boolean | null;
+  searchTerm: string | undefined;
+};
+
+type Action = {
+  type:
+    | "initial"
+    | "is_catch"
+    | "is_hit"
+    | "user_is_active"
+    | "user_is_passive"
+    | "set_search_term";
+  searchTerm?: string | undefined;
+};
+
+function reducer(state: State, action: Action) {
+  switch (action.type) {
+    case "initial":
+      return {
+        ...state,
+        showHitOrCatchButtons: true,
+        showActiveOrPassiveButtons: false,
+        showSearch: false,
+        activeId: null,
+        passiveId: null,
+        isCatch: null,
+        searchTerm: undefined,
+      };
+    case "is_catch":
+      return {
+        ...state,
+        showHitOrCatchButtons: false,
+        showActiveOrPassiveButtons: true,
+        isCatch: true,
+      };
+    case "is_hit":
+      return {
+        ...state,
+        showHitOrCatchButtons: false,
+        showActiveOrPassiveButtons: true,
+        isCatch: false,
+      };
+    case "user_is_active": // TODO: refactor 'user_is_active' and 'user_is_passive' to one action.type
+      return {
+        ...state,
+        showActiveOrPassiveButtons: false,
+        showSearch: true,
+        activeId: 1,
+      };
+    case "user_is_passive":
+      return {
+        ...state,
+        showActiveOrPassiveButtons: false,
+        showSearch: true,
+        passiveId: 1,
+      };
+    case "set_search_term":
+      return {
+        ...state,
+        searchTerm: action.searchTerm,
+      };
+
+    default:
+      throw Error(`Unknown type: ${action.type}`);
+  }
+}
+
 function HomeScreen() {
-  // TODO: Switch to useReducer
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [showHitOrCatchButtons, setShowHitOrCatchButtons] =
-    useState<boolean>(true);
-  const [showActiveOrPassiveButtons, setShowActiveOrPassiveButtons] =
-    useState<boolean>(false);
-  const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [activeId, setActiveId] = useState<number | null>(null);
-  const [passiveId, setPassiveId] = useState<number | null>(null);
-  const [isCatch, setIsCatch] = useState<boolean | null>(null);
+  const [state, dispatch] = useReducer(reducer, {
+    showHitOrCatchButtons: true,
+    showActiveOrPassiveButtons: false,
+    showSearch: false,
+    activeId: null,
+    passiveId: null,
+    isCatch: null,
+    searchTerm: undefined,
+  });
 
   const [searchPlayers, { data }] = useLazyQuery(SEARCH_PLAYERS);
   const [createCatch /*, { data, loading, error } */] =
@@ -65,55 +137,39 @@ function HomeScreen() {
   const [createHit /*, { data, loading, error } */] = useMutation(CREATE_HIT);
 
   useEffect(() => {
-    searchPlayers({ variables: { searchTerm } });
-  }, [searchTerm]);
+    searchPlayers({ variables: { searchTerm: state.searchTerm } });
+  }, [state.searchTerm]);
 
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        {showHitOrCatchButtons && (
+        {state.showHitOrCatchButtons && (
           <Fragment>
             <Pressable
               style={styles.button}
-              onPress={() => {
-                setShowHitOrCatchButtons(false);
-                setShowActiveOrPassiveButtons(true);
-                setIsCatch(true);
-              }}
+              onPress={() => dispatch({ type: "is_catch" })}
             >
               <Text style={styles.text}>Create catch</Text>
             </Pressable>
             <Pressable
               style={styles.button}
-              onPress={() => {
-                setShowHitOrCatchButtons(false);
-                setShowActiveOrPassiveButtons(true);
-                setIsCatch(false);
-              }}
+              onPress={() => dispatch({ type: "is_hit" })}
             >
               <Text style={styles.text}>Create hit</Text>
             </Pressable>
           </Fragment>
         )}
-        {showActiveOrPassiveButtons && (
+        {state.showActiveOrPassiveButtons && (
           <Fragment>
             <Pressable
               style={styles.button}
-              onPress={() => {
-                setShowActiveOrPassiveButtons(false);
-                setShowSearch(true);
-                setActiveId(1);
-              }}
+              onPress={() => dispatch({ type: "user_is_active" })}
             >
               <Text style={styles.text}>I caught or hit the other person</Text>
             </Pressable>
             <Pressable
               style={styles.button}
-              onPress={() => {
-                setShowActiveOrPassiveButtons(false);
-                setShowSearch(true);
-                setPassiveId(1);
-              }}
+              onPress={() => dispatch({ type: "user_is_passive" })}
             >
               <Text style={styles.text}>
                 I was caught or hit by the other person
@@ -121,22 +177,28 @@ function HomeScreen() {
             </Pressable>
           </Fragment>
         )}
-        {showSearch && (
+        {state.showSearch && (
           <Fragment>
             <TextInput
-              value={searchTerm}
+              value={state.searchTerm}
               placeholder="Enter player's name"
-              onChangeText={(text) => setSearchTerm(text)}
+              onChangeText={(text) =>
+                dispatch({ type: "set_search_term", searchTerm: text })
+              }
             />
             <View>
-              {searchTerm &&
+              {state.searchTerm &&
                 data?.players?.map((player: Player) => (
                   <Pressable
                     key={player.id}
                     onPress={() => {
-                      const activePlayerId = activeId ? activeId : player.id;
-                      const passivePlayerId = passiveId ? passiveId : player.id;
-                      isCatch
+                      const activePlayerId = state.activeId
+                        ? state.activeId
+                        : player.id;
+                      const passivePlayerId = state.passiveId
+                        ? state.passiveId
+                        : player.id;
+                      state.isCatch
                         ? createCatch({
                             variables: {
                               catcherId: activePlayerId,
@@ -149,12 +211,7 @@ function HomeScreen() {
                               hitteeId: passivePlayerId,
                             },
                           });
-                      setIsCatch(null);
-                      setActiveId(null);
-                      setPassiveId(null);
-                      setSearchTerm("");
-                      setShowSearch(false);
-                      setShowHitOrCatchButtons(true);
+                      dispatch({ type: "initial" });
                     }}
                   >
                     <Text>{`${player.firstName} ${player.lastName}`}</Text>
