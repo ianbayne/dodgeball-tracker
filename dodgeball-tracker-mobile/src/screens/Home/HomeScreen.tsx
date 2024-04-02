@@ -211,34 +211,29 @@ function HomeScreen() {
             </View>
           </Fragment>
         )}
+        <Pressable
+          style={styles.cancelButton}
+          onPress={() => dispatch({ type: "initial" })}
+        >
+          <Text>Cancel</Text>
+        </Pressable>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    borderColor: "lightgreen",
-    borderRadius: 20,
-    borderWidth: 2,
-    padding: 40,
-    width: 300,
-  },
   buttonContainer: {
     height: 400,
     justifyContent: "space-around",
+  },
+  cancelButton: {
+    alignSelf: "flex-end",
   },
   container: {
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-  },
-  text: {
-    fontSize: 24, // TODO: What's the baseline?
-    fontWeight: "bold",
-    textAlign: "center",
-    textTransform: "uppercase",
   },
 });
 
