@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
 import type Player from "../../types/Player";
+import Button from "../../components/Button";
 
 const SEARCH_PLAYERS = gql`
   query SearchPlayers($searchTerm: String) {
@@ -145,36 +146,26 @@ function HomeScreen() {
       <View style={styles.buttonContainer}>
         {state.showHitOrCatchButtons && (
           <Fragment>
-            <Pressable
-              style={styles.button}
+            <Button
               onPress={() => dispatch({ type: "is_catch" })}
-            >
-              <Text style={styles.text}>Create catch</Text>
-            </Pressable>
-            <Pressable
-              style={styles.button}
+              title="Create catch"
+            />
+            <Button
               onPress={() => dispatch({ type: "is_hit" })}
-            >
-              <Text style={styles.text}>Create hit</Text>
-            </Pressable>
+              title="Create hit"
+            />
           </Fragment>
         )}
         {state.showActiveOrPassiveButtons && (
           <Fragment>
-            <Pressable
-              style={styles.button}
+            <Button
               onPress={() => dispatch({ type: "user_is_active" })}
-            >
-              <Text style={styles.text}>I caught or hit the other person</Text>
-            </Pressable>
-            <Pressable
-              style={styles.button}
+              title="I caught or hit the other person"
+            />
+            <Button
               onPress={() => dispatch({ type: "user_is_passive" })}
-            >
-              <Text style={styles.text}>
-                I was caught or hit by the other person
-              </Text>
-            </Pressable>
+              title="I was caught or hit by the other person"
+            />
           </Fragment>
         )}
         {state.showSearch && (
@@ -228,8 +219,9 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
-    backgroundColor: "lightgreen",
+    borderColor: "lightgreen",
     borderRadius: 20,
+    borderWidth: 2,
     padding: 40,
     width: 300,
   },
@@ -243,7 +235,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    color: "white",
     fontSize: 24, // TODO: What's the baseline?
     fontWeight: "bold",
     textAlign: "center",
