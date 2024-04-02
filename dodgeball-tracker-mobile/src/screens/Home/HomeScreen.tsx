@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "white",
-    fontSize: 24,
+    fontSize: 24, // TODO: What's the baseline?
     fontWeight: "bold",
     textAlign: "center",
     textTransform: "uppercase",
