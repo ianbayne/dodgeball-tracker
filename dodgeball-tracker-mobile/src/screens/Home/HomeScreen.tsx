@@ -169,8 +169,9 @@ function HomeScreen() {
           </Fragment>
         )}
         {state.showSearch && (
-          <Fragment>
+          <View>
             <TextInput
+              style={styles.textInputText}
               value={state.searchTerm}
               placeholder="Enter player's name"
               onChangeText={(text) =>
@@ -209,15 +210,15 @@ function HomeScreen() {
                   </Pressable>
                 ))}
             </View>
-          </Fragment>
+          </View>
         )}
-        <Pressable
-          style={styles.cancelButton}
-          onPress={() => dispatch({ type: "initial" })}
-        >
-          <Text>Cancel</Text>
-        </Pressable>
       </View>
+      <Pressable
+        style={styles.cancelButton}
+        onPress={() => dispatch({ type: "initial" })}
+      >
+        <Text>Cancel</Text>
+      </Pressable>
     </View>
   );
 }
@@ -234,6 +235,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
+    padding: 65,
+    width: "100%",
+  },
+  textInputText: {
+    fontSize: 24,
   },
 });
 
