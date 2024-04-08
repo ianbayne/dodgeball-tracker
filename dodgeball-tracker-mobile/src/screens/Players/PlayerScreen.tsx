@@ -1,12 +1,12 @@
 import { ScrollView, StyleSheet, Text } from "react-native";
 
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import type { PlayersStackParamList } from "./PlayersStackNavigator";
-import type Player from "../../types/Player";
+import { gql } from "../../__generated__";
 
-const GET_PLAYER = gql`
+const GET_PLAYER = gql(`
   query GetPlayer($id: ID!) {
     player(id: $id) {
       id
@@ -14,7 +14,7 @@ const GET_PLAYER = gql`
       lastName
     }
   }
-`;
+`);
 
 type Props = NativeStackScreenProps<PlayersStackParamList, "PlayerScreen">;
 
@@ -29,7 +29,6 @@ function PlayerScreen({ route }: Props) {
 
   const { id } = route.params;
   const { loading, error, data } = useQuery(GET_PLAYER, {
-    // TODO: Generate types? https://www.apollographql.com/docs/react/development-testing/static-typing/
     variables: { id },
   });
 
@@ -40,7 +39,7 @@ function PlayerScreen({ route }: Props) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text>
-        {data.player.firstName} {data.player.lastName}
+        {data?.player.firstName} {data?.player.lastName}
       </Text>
     </ScrollView>
   );

@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useReducer } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 
-import type Player from "../../types/Player";
 import Button from "../../components/Button";
+import { gql } from "../../__generated__";
 
-const SEARCH_PLAYERS = gql`
+const SEARCH_PLAYERS = gql(`
   query SearchPlayers($searchTerm: String) {
     players(search: $searchTerm) {
       id
@@ -14,9 +14,9 @@ const SEARCH_PLAYERS = gql`
       lastName
     }
   }
-`;
+`);
 
-const CREATE_CATCH = gql`
+const CREATE_CATCH = gql(`
   mutation CreateCatch($catcherId: ID!, $catcheeId: ID!) {
     createCatch(input: { catcherId: $catcherId, catcheeId: $catcheeId }) {
       catch {
@@ -30,9 +30,9 @@ const CREATE_CATCH = gql`
       }
     }
   }
-`;
+`);
 
-const CREATE_HIT = gql`
+const CREATE_HIT = gql(`
   mutation CreateHit($hitterId: ID!, $hitteeId: ID!) {
     createHit(input: { hitterId: $hitterId, hitteeId: $hitteeId }) {
       hit {
@@ -46,14 +46,14 @@ const CREATE_HIT = gql`
       }
     }
   }
-`;
+`);
 
 type State = {
   showHitOrCatchButtons: boolean;
   showActiveOrPassiveButtons: boolean;
   showSearch: boolean;
-  activeId: number | null;
-  passiveId: number | null;
+  activeId: string | null;
+  passiveId: string | null;
   isCatch: boolean | null;
   searchTerm: string | undefined;
 };
@@ -101,14 +101,14 @@ function reducer(state: State, action: Action) {
         ...state,
         showActiveOrPassiveButtons: false,
         showSearch: true,
-        activeId: 1,
+        activeId: "1",
       };
     case "user_is_passive":
       return {
         ...state,
         showActiveOrPassiveButtons: false,
         showSearch: true,
-        passiveId: 1,
+        passiveId: "1",
       };
     case "set_search_term":
       return {
@@ -180,7 +180,7 @@ function HomeScreen() {
             />
             <View>
               {state.searchTerm &&
-                data?.players?.map((player: Player) => (
+                data?.players?.map((player) => (
                   <Pressable
                     key={player.id}
                     onPress={() => {

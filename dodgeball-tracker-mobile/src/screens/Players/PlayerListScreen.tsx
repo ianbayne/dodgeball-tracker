@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet, Text } from "react-native";
 
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import type Player from "../../types/Player";
 import type { PlayersStackParamList } from "./PlayersStackNavigator";
+import { gql } from "../../__generated__";
 
-const GET_PLAYERS = gql`
+const GET_PLAYERS = gql(`
   query GetPlayers {
     players {
       id
@@ -15,7 +15,7 @@ const GET_PLAYERS = gql`
       lastName
     }
   }
-`;
+`);
 
 type PlayerListScreenProp = NativeStackNavigationProp<
   PlayersStackParamList,
@@ -33,7 +33,7 @@ function PlayerListScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {data.players.map(({ id, firstName, lastName }: Player) => (
+      {data?.players.map(({ id, firstName, lastName }) => (
         <Text
           key={id}
           onPress={() => {
