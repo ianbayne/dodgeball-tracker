@@ -10,6 +10,7 @@ import client from "./src/apolloClient";
 import HomeScreen from "./src/screens/Home/HomeScreen";
 import PlayersStackNavigator from "./src/screens/Players/PlayersStackNavigator";
 import ErrorBoundary from "./src/components/ErrorBoundary";
+import ProfileScreen from "./src/screens/Profile/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -27,7 +28,11 @@ export default function App() {
                     return <Entypo name="home" size={size} color={color} />;
                   } else if (route.name === "Players") {
                     return (
-                      <FontAwesome6 name="person" size={size} color={color} />
+                      <FontAwesome6 name="users" size={size} color={color} />
+                    );
+                  } else if (route.name === "Profile") {
+                    return (
+                      <FontAwesome6 name="user" size={size} color={color} />
                     );
                   }
                 },
@@ -37,6 +42,7 @@ export default function App() {
             >
               <Tab.Screen name="Home" component={HomeScreen} />
               <Tab.Screen name="Players" component={PlayersStackNavigator} />
+              <Tab.Screen name="Profile" component={ProfileScreen} />
             </Tab.Navigator>
           </NavigationContainer>
         </SafeAreaView>
