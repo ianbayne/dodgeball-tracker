@@ -2,6 +2,8 @@ import { ScrollView, Text } from "react-native";
 
 import { gql, useQuery } from "@apollo/client";
 
+import type Player from "../../types/Player";
+
 const GET_PLAYER = gql`
   query GetPlayer($id: ID!) {
     player(id: $id) {
@@ -21,14 +23,14 @@ function ProfileScreen() {
 
   if (error) return <Text>Error : {error.message}</Text>;
 
-  const { player } = data;
+  const { firstName, lastName }: Player = data.player;
 
   return (
     <ScrollView
     // contentContainerStyle={styles.container}
     >
       <Text>
-        {player.firstName} {player.lastName}
+        {firstName} {lastName}
       </Text>
     </ScrollView>
   );

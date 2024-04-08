@@ -4,6 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import type { PlayersStackParamList } from "./PlayersStackNavigator";
+import type Player from "../../types/Player";
 
 const GET_PLAYER = gql`
   query GetPlayer($id: ID!) {
@@ -28,6 +29,7 @@ function PlayerScreen({ route }: Props) {
 
   const { id } = route.params;
   const { loading, error, data } = useQuery(GET_PLAYER, {
+    // TODO: Generate types? https://www.apollographql.com/docs/react/development-testing/static-typing/
     variables: { id },
   });
 
