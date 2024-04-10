@@ -1,11 +1,12 @@
 import { ScrollView, Text } from "react-native";
 
 import { useQuery } from "@apollo/client";
+
 import { gql } from "../../__generated__";
 
-const GET_PLAYER = gql(`
-  query GetPlayer($id: ID!) {
-    player(id: $id) {
+const GET_ME = gql(`
+  query GetMe {
+    me {
       id
       firstName
       lastName
@@ -14,7 +15,7 @@ const GET_PLAYER = gql(`
 `);
 
 function ProfileScreen() {
-  const { data, error, loading } = useQuery(GET_PLAYER, {
+  const { data, error, loading } = useQuery(GET_ME, {
     variables: { id: "1" }, // Hardcoded for the time being. TODO: Make getMe query
   });
 

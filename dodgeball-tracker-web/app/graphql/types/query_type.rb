@@ -27,6 +27,7 @@ module Types
     field :player, Types::PlayerType, null: false do
       argument :id, ID, required: true
     end
+    field :me, Types::PlayerType, null: true
 
     def players(search: nil)
       if search
@@ -38,6 +39,10 @@ module Types
 
     def player(id:)
       Player.find(id)
+    end
+
+    def me
+      Player.find(1) # TODO: Hardcoded for the time being
     end
   end
 end
