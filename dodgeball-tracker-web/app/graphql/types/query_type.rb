@@ -31,7 +31,7 @@ module Types
 
     def players(search: nil)
       if search
-        Player.where('first_name ILIKE ? OR last_name ILIKE ?', "%#{search}%", "%#{search}%")
+        Player.where('first_name ILIKE ? OR last_name ILIKE ?', "%#{search}%", "%#{search}%") # TODO: Exclude current_user
       else
         Player.all
       end
