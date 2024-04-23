@@ -3,9 +3,10 @@ import { Pressable, StyleSheet, Text } from "react-native";
 type Props = {
   onPress: () => void;
   title: string;
+  disabled?: boolean;
 };
 
-function Button({ onPress, title }: Props) {
+function Button({ onPress, title, disabled }: Props) {
   return (
     <Pressable
       style={({ pressed }) => [
@@ -15,6 +16,7 @@ function Button({ onPress, title }: Props) {
         styles.button,
       ]}
       onPress={onPress}
+      disabled={disabled}
     >
       {({ pressed }) => (
         <Text
