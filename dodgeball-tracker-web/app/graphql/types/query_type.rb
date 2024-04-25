@@ -30,11 +30,11 @@ module Types
     field :me, Types::PlayerType, null: true
 
     def players(search: nil)
-      if search
-        Player.where('first_name ILIKE ? OR last_name ILIKE ?', "%#{search}%", "%#{search}%") # TODO: Exclude current_user
-      else
-        Player.all
-      end
+      players_without_current_user = Player.where.not(id: context[:current_user].id)
+      return players_without_current_user if search.nil?
+
+      players_without_current_user.where('first_name ILIKE ? OR last_name ILIKE ?', "%#{search}%",
+                                         "%#{search}%")
     end
 
     def player(id:)
@@ -42,7 +42,7 @@ module Types
     end
 
     def me
-      Player.find(1) # TODO: Hardcoded for the time being
+      Player.find(context[:current_user].id)
     end
   end
 end

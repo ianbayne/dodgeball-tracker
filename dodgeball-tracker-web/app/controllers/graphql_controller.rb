@@ -11,8 +11,8 @@ class GraphqlController < ApplicationController
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      # TODO: Should this be current_player? Or should the player model be the user model?
+      current_user: Player.find_by(first_name: 'Ian', last_name: 'Bayne') # TODO: Hardcoded for the time being
     }
     result = DodgeballTrackerWebSchema.execute(query, variables:, context:,
                                                       operation_name:)
