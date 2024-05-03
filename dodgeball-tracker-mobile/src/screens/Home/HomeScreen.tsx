@@ -1,10 +1,11 @@
-import { Fragment, useEffect, useReducer } from "react";
+import { Fragment, useEffect, useMemo, useReducer } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { useLazyQuery, useMutation } from "@apollo/client";
 
 import Button from "../../components/Button";
 import { gql } from "../../__generated__";
+import debounce from "../../utils/debounce";
 
 const SEARCH_PLAYERS = gql(`
   query SearchPlayers($searchTerm: String) {
@@ -139,7 +140,15 @@ function HomeScreen() {
 
   useEffect(() => {
     searchPlayers({ variables: { searchTerm: state.searchTerm } });
-  }, [state.searchTerm]);
+  }, [searchPlayers, state.searchTerm]);
+
+  const handleSearchOnChangeText = useMemo(
+    () =>
+      debounce((text: string) =>
+        dispatch({ type: "set_search_term", searchTerm: text })
+      ),
+    []
+  );
 
   return (
     <View style={styles.container}>
@@ -172,11 +181,9 @@ function HomeScreen() {
           <View>
             <TextInput
               style={styles.textInputText}
-              value={state.searchTerm}
+              defaultValue={state.searchTerm} // Text inputting becomes progressively slower when using `value` instead of `defaultValue`. REF: https://github.com/facebook/react-native/issues/20119#issuecomment-1705965169
               placeholder="Enter player's name"
-              onChangeText={(text) =>
-                dispatch({ type: "set_search_term", searchTerm: text })
-              }
+              onChangeText={(text) => handleSearchOnChangeText(text)}
             />
             <View>
               {state.searchTerm &&
